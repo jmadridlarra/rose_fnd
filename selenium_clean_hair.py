@@ -94,11 +94,13 @@ def scrape_each_page(url_link):
             "description":"h-margin-v-default",
             "specifications": "styles__StyledCol"
         }
-        ingredients_scrape = []
-        for div in product_soup.find_all(id="tabContent-tab-Labelinfo"):
-            ingredients_scrape.append(div)
-            print(div)
-        product_page_info["ingredients"] = ingredients_scrape
+        # ingredients_scrape = []
+        # print(product_soup.find_all(id='tabContent-tab-Labelinfo'))
+        # for div in product_soup.find_all(id='tabContent-tab-Labelinfo'):
+        #     print("empty div")
+        #     ingredients_scrape.append(div)
+        #     print(div.text)
+        
 
         def general_scrape(div_class):
             # print(div_class)
@@ -112,6 +114,14 @@ def scrape_each_page(url_link):
 
         for key in wanted_info.keys():
             product_page_info[key] = general_scrape(wanted_info[key])
+
+        from selenium.common.exceptions import NoSuchElementException
+        try:
+            driver.find_element("link text", "Label info").click()
+            wait = WebDriverWait(driver, 30)
+            product_page_info["ingredients"] = driver.find_element("xpath", '//*[@id="tabContent-tab-Labelinfo"]/div/div/div[1]/div').text 
+        except NoSuchElementException:
+            product_page_info["ingredients"] = "not available on Target website"
 
         driver.close()
         window_name = driver.window_handles[0]
@@ -139,7 +149,8 @@ def scrape_each_page(url_link):
                         print("opening new tab")
                         if a.has_attr('href'):
                             print(a['href'])
-                            info.append(scrape_product_info(a["href"]))
+                            for value in scrape_product_info(a["href"]).values
+                                info.append(value)
                     info = []
                     
                 elif a.text == 'Exclusions Apply.':
@@ -151,7 +162,8 @@ def scrape_each_page(url_link):
             print("opening new tab")
             if a.has_attr('href'):
                 print(a['href'])
-                info.append(scrape_product_info(a["href"]))
+                for value in scrape_product_info(a["href"]).values
+                    info.append(value)
 
     def scrape_page():
         count = 0
@@ -170,6 +182,15 @@ def scrape_each_page(url_link):
             wait = WebDriverWait(driver, 50)
             
             print(full_product_list)
+            print("exporting to excel")
+            import pandas as pd
+            df = pd.DataFrame.from_dict(full_product_list, orient='index')
+
+            df = (df.T)
+
+            print (df)
+
+            df.to_excel('sample_data.xlsx', sheet_name='sheet1', index=False)
 
         for key in full_product_list.keys():
             print(key)
@@ -206,13 +227,23 @@ def get_next_link(base_url, multiplier):
 base_url = "https://www.target.com/c/textured-hair-care/-/N-4rsrfZvdjvcsibby6Zvdjvcsbepaw"
 
 entire_product_list = scrape_each_page(base_url)
-import pandas as pd
+# import pandas as pd
 
-new_list = entire_product_list
-df = pd.DataFrame(new_list)
-writer = pd.ExcelWriter('test.xlsx', engine='xlsxwriter')
-df.to_excel(writer, sheet_name='welcome', index=False)
-writer.save()
+# new_list = entire_product_list
+# df = pd.DataFrame(new_list)
+# writer = pd.ExcelWriter('test.xlsx', engine='xlsxwriter')
+# df.to_excel(writer, sheet_name='welcome', index=False)
+# writer.save()
+
+import pandas as pd
+df = pd.DataFrame(data=entire_product_list, index=[0])
+
+df = (df.T)
+
+print (df)
+
+df.to_excel('dict1.xlsx')
+data.to_excel('sample_data.xlsx', sheet_name='sheet1', index=False)
 
 index = 1
 
