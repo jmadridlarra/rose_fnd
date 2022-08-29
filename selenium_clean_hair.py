@@ -90,7 +90,7 @@ def scrape_each_page(url_link):
         wanted_info = {
             "wellness_badges": "styles__WellnessBadgeDescription",
             # "ingredients":"h-text-transform-caps",
-            "highlights":"styles__Bullet",
+            # "highlights":"styles__StyledRow",
             "description":"h-margin-v-default",
             "specifications": "styles__StyledCol"
         }
@@ -115,6 +115,9 @@ def scrape_each_page(url_link):
         for key in wanted_info.keys():
             product_page_info[key] = general_scrape(wanted_info[key])
 
+        # product_page_info["highlights"] = driver.find_element("xpath", '//*[@id="tabContent-tab-Details"]/div/div/div/div[1]/div[2]/div/ul/div').text
+        # print(driver.find_element("xpath", '//*[@id="tabContent-tab-Details"]/div/div/div/div[1]/div[2]/div/ul/div').text)
+
         from selenium.common.exceptions import NoSuchElementException
         try:
             driver.find_element("link text", "Label info").click()
@@ -130,39 +133,51 @@ def scrape_each_page(url_link):
         return product_page_info
 
 
-    full_product_list = {}
+    full_product_list = {"Product Title":["Target 'badges'", "description", "specifications", "ingredients", "Product Brand", "Target ratings"]}
     # soup = bs(driver.page_source,"html.parser")
     def create_list(soup):
+        '''
+        Loops through soup of each page and scrapes each product card.
+        '''
         # print(soup.select('div[class^=styles__StyledProductCardBody]').__class__)
         info = []
         is_key = True
         cur_key = 'NULL'
         for div in soup.select('div[class^=styles__StyledProductCardBody]'):
+            # loops through each product
             # print(div)
             for a in div.select('a[class^=Link__StyledLink]', href=True):
+                # finds link for each product page
                 if is_key:
+                    # this is a new product
                     is_key = False
                     old_key = cur_key
                     cur_key = a.text
-                    if old_key not in full_product_list:
-                        full_product_list[old_key] = info
+                    if cur_key not in full_product_list:
+                        full_product_list[cur_key] = info
                         print("opening new tab")
                         if a.has_attr('href'):
                             print(a['href'])
-                            for value in scrape_product_info(a["href"]).values
+                            for value in scrape_product_info(a["href"]).values():
                                 info.append(value)
-                    info = []
+                    
                     
                 elif a.text == 'Exclusions Apply.':
+                    # signifies end of a product
                     is_key = True
+                    info = []
                 else:
+                    # this is not a new product so we will just collect info
                     info.append(a.text)
-        if old_key not in full_product_list:
-            full_product_list[old_key] = info
+        if cur_key not in full_product_list:
+            # last product case
+            # if old_key == "NULL":
+            #     full_product_list[cur_key] = info
+            full_product_list[cur_key] = info
             print("opening new tab")
             if a.has_attr('href'):
                 print(a['href'])
-                for value in scrape_product_info(a["href"]).values
+                for value in scrape_product_info(a["href"]).values():
                     info.append(value)
 
     def scrape_page():
@@ -181,7 +196,7 @@ def scrape_each_page(url_link):
             wait = WebDriverWait(driver, 50).until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'div[class^=styles__StyledProductCardBody]')))
             wait = WebDriverWait(driver, 50)
             
-            print(full_product_list)
+            # print(full_product_list)
             print("exporting to excel")
             import pandas as pd
             df = pd.DataFrame.from_dict(full_product_list, orient='index')
@@ -235,15 +250,15 @@ entire_product_list = scrape_each_page(base_url)
 # df.to_excel(writer, sheet_name='welcome', index=False)
 # writer.save()
 
-import pandas as pd
-df = pd.DataFrame(data=entire_product_list, index=[0])
+# import pandas as pd
+# df = pd.DataFrame(data=entire_product_list, index=[0])
 
-df = (df.T)
+# df = (df.T)
 
-print (df)
+# print (df)
 
-df.to_excel('dict1.xlsx')
-data.to_excel('sample_data.xlsx', sheet_name='sheet1', index=False)
+# df.to_excel('dict1.xlsx')
+# data.to_excel('sample_data.xlsx', sheet_name='sheet1', index=False)
 
 index = 1
 
