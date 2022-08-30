@@ -274,7 +274,7 @@ entire_product_list = entire_product_list.update(scrape_each_page(link))
 
 print("exporting to excel")
 import pandas as pd
-df = pd.DataFrame.from_dict(full_product_list, orient='index')
+df = pd.DataFrame.from_dict(entire_product_list, orient='index')
 
 df = (df.T)
 
