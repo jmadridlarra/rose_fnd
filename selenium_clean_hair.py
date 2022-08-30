@@ -14,6 +14,10 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 # driver = webdriver.Chrome("C:/Users/joaqu/Downloads/chromedriver_win32/chromedriver.exe")
 
+# Target address
+# 3535 S La Cienega Blvd, Los Angeles, CA 90016
+
+
 def scrape_each_page(url_link):
     driver.get(url_link)
     print(driver.current_url)
@@ -241,7 +245,10 @@ def get_next_link(base_url, multiplier):
 
 base_url = "https://www.target.com/c/textured-hair-care/-/N-4rsrfZvdjvcsibby6Zvdjvcsbepaw"
 
-entire_product_list = scrape_each_page(base_url)
+page_product_list = scrape_each_page(base_url)
+entire_product_list = page_product_list
+
+
 # import pandas as pd
 
 # new_list = entire_product_list
@@ -263,9 +270,17 @@ entire_product_list = scrape_each_page(base_url)
 index = 1
 
 link = get_next_link(base_url, index)
-entire_product_list = entire_product_list + scrape_each_page(link)
+entire_product_list = entire_product_list.update(scrape_each_page(link))
 
+print("exporting to excel")
+import pandas as pd
+df = pd.DataFrame.from_dict(full_product_list, orient='index')
 
+df = (df.T)
+
+print (df)
+
+df.to_excel('rose_fnd_target_data-159.xlsx', sheet_name='sheet1', index=False)
 # while index < 8:
 #     link = get_next_link(base_url, index)
 #     scrape_each_page(link)
