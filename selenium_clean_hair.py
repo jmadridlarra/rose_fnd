@@ -245,8 +245,8 @@ def get_next_link(base_url, multiplier):
 
 base_url = "https://www.target.com/c/textured-hair-care/-/N-4rsrfZvdjvcsibby6Zvdjvcsbepaw"
 
-page_product_list = scrape_each_page(base_url)
-entire_product_list = page_product_list
+entire_product_list = scrape_each_page(base_url)
+# entire_product_list = page_product_list
 
 
 # import pandas as pd
@@ -270,7 +270,12 @@ entire_product_list = page_product_list
 index = 1
 
 link = get_next_link(base_url, index)
-entire_product_list = entire_product_list.update(scrape_each_page(link))
+print("entire product list:")
+print(entire_product_list)
+entire_product_list.update(scrape_each_page(link))
+print("entire updated product list:")
+print(entire_product_list)
+
 
 print("exporting to excel")
 import pandas as pd
