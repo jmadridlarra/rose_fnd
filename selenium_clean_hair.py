@@ -12,6 +12,17 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
+latitude = 34.023654445935286
+longitude = -118.37377283773024
+accuracy = 100
+
+driver.maximize_window()
+driver.execute_cdp_cmd("Emulation.setGeolocationOverride", {
+    "latitude": latitude,
+    "longitude": longitude,
+    "accuracy": accuracy
+     })
+
 # driver = webdriver.Chrome("C:/Users/joaqu/Downloads/chromedriver_win32/chromedriver.exe")
 
 # Target address
@@ -269,13 +280,10 @@ entire_product_list = scrape_each_page(base_url)
 
 index = 1
 
-link = get_next_link(base_url, index)
-print("entire product list:")
-print(entire_product_list)
-entire_product_list.update(scrape_each_page(link))
-print("entire updated product list:")
-print(entire_product_list)
-
+while index < 7: 
+    link = get_next_link(base_url, index)
+    entire_product_list.update(scrape_each_page(link))
+    index += 1
 
 print("exporting to excel")
 import pandas as pd
