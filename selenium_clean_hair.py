@@ -128,7 +128,18 @@ def scrape_each_page(url_link):
             return general_list
 
         for key in wanted_info.keys():
-            product_page_info[key] = general_scrape(wanted_info[key])
+            if key != "specifications":
+                product_page_info[key] = general_scrape(wanted_info[key])
+            else:
+                scraped_list = general_scrape(wanted_info[key])
+                product_page_info[key] = scraped_list[3:]
+                import re
+                price = re.findall(r"[-+]?(?:\d*\.\d+|\d+)", scraped_list[1])[0]
+                if price != str(5):
+                    product_page_info["price"] = price
+                else:
+                    product_page_info["price"] = "not scraped"
+
 
         # product_page_info["highlights"] = driver.find_element("xpath", '//*[@id="tabContent-tab-Details"]/div/div/div/div[1]/div[2]/div/ul/div').text
         # print(driver.find_element("xpath", '//*[@id="tabContent-tab-Details"]/div/div/div/div[1]/div[2]/div/ul/div').text)
@@ -148,7 +159,7 @@ def scrape_each_page(url_link):
         return product_page_info
 
 
-    full_product_list = {"Product Title":["Target 'badges'", "description", "specifications", "ingredients", "Product Brand", "Target ratings"]}
+    full_product_list = {"Product Title":["Target 'badges'", "description", "specifications", "price", "ingredients", "Product Brand", "Target ratings"]}
     # soup = bs(driver.page_source,"html.parser")
     def create_list(soup):
         '''
