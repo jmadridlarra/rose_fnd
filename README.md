@@ -9,6 +9,10 @@ Of these products, pull a subset of products that contain buzzwords:
 4. green
 etc.
 
+NOTE: The current code does not pull products containing buzzwords. 
+
 In addition to the name, we need the ingredients list, images of the product, brand name, tags, 
 
-Output this info into excel spreadsheet
+Output this info into excel spreadsheet.
+
+To accomplish this, run `selenium_clean_hair.py`.  All other files are deprecated. 
