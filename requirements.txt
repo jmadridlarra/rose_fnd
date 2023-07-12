@@ -6,3 +6,5 @@ pipreqs==0.4.13
 requests==2.31.0
 urllib3==2.0.3
 yarg==0.1.9
+bs4==4.11.1
+selenium==4.2.0
